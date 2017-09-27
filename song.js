@@ -1,57 +1,64 @@
 var cheerio = require('cheerio');
 var request = require('request');
 
-class Song{
+/**
+ * Persistent properties
+ * name
+ * link
+ * lyrics
+ */
+class Song {
 
 	url = 'https://www.azlyrics.com';
 
-	constructor(name,link){
+	constructor(name, link) {
 		this.name = name;
 		this.link = formatLink(link);
-		this.getLyrics.bind(this); 
+		this.getLyrics.bind(this);
 	}
 
-	formatLink(link){
+	formatLink(link) {
 		return url + link.substring(2);
 	}
 
-	check(lyricsDiv){
-		return lyricsDiv.type==='tag' && lyricsDiv.name==='div';
+	check(lyricsDiv) {
+		return lyricsDiv.type === 'tag' && lyricsDiv.name === 'div';
 	}
 
-	getLyrics(callback){
-		request(link,(err,resp,html)=>{
-			
-			if(err){
+	getLyrics(callback) {
+		request(this.link, (err, resp, html) => {
+
+			if (err) {
+				console.log("Failed to fetch " + this.name + " from " + this.link + "\n");
 				callback(false);
 				return;
 			}
 
 			var lyricsDiv = $('.ringtone')[0].next;
-			while(!check(lyricsDiv)){
+			while (!check(lyricsDiv)) {
 				lyricsDiv = lyricsDiv.next;
 			}
 
-			var link = "";
+			var lyrics = "";
 			var isIgnore = false;
-			
-			lyricsDiv.children.forEach((element)=>{
-				if(element.type==='tag' && element.name==='i'){
+
+			lyricsDiv.children.forEach((element) => {
+				if (element.type === 'tag' && element.name === 'i') {
 					isIgnore = !isIgnore;
 					return;
 				}
-		
-				if(isIgnore){
+
+				if (isIgnore) {
 					return;
 				}
-		
-				if(element.type==='text'){
-					link += element.data;
+
+				if (element.type === 'text') {
+					lyrics += element.data;
 				}
 			});
-			
-			this.link = link;
-			
+
+			this.lyrics = lyrics;
+			console.log("Successfully fetched " + this.name + " from " + this.link + "\n");
 			callback(true);
 		});
 	}
