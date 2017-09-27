@@ -5,7 +5,7 @@ const fs = require('fs');
 
 //change artist in json file
 const artist = require('./artist.json');
-var Song = require('song.js');
+var Song = require('./song.js');
 
 
 // create csvWriters
@@ -28,7 +28,7 @@ var scrapeResp = (err, resp, html) => {
 
   const $ = cheerio.load(html);
   // all songs with their links + some noise
-  const collection = $('#listAlbum')[0].children;
+  var collection = $('#listAlbum')[0].children;
   collection = collection.filter((obj) => {
     return obj.type === 'tag' && obj.name === 'a' && !obj.attribs.id;
   });
@@ -41,7 +41,7 @@ var scrapeResp = (err, resp, html) => {
 var generateLyrics = (collection) => {
   var count = 0, suc_count = 0;
   console.log("Starting scraping.......\n")
-  collection.foreach((element) => {
+  collection.forEach((element) => {
     var relurl = element.attribs.href;
     var songName = element.children[0].data
     var song = new Song(songName, relurl);

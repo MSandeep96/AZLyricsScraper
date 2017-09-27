@@ -9,16 +9,15 @@ var request = require('request');
  */
 class Song {
 
-	url = 'https://www.azlyrics.com';
 
 	constructor(name, link) {
 		this.name = name;
-		this.link = formatLink(link);
+		this.link = link;
 		this.getLyrics.bind(this);
 	}
 
 	formatLink(link) {
-		return url + link.substring(2);
+		return 'https://www.azlyrics.com' + link.substring(2);
 	}
 
 	check(lyricsDiv) {
