@@ -9,7 +9,7 @@ var Song = require('./song.js');
 
 //create data folder if it doesn't exist
 var dir = './data';
-if(!fs.existsSync(dir)){
+if (!fs.existsSync(dir)) {
   fs.mkdirSync(dir);
 }
 
@@ -22,6 +22,7 @@ var url = 'https://www.azlyrics.com/';
 url += artist.name[0] + '/';
 url += artist.name + '.html';
 
+var count = 0, suc_count = 0;
 
 //filter response to include only songs lyrics
 var scrapeResp = (err, resp, html) => {
@@ -37,9 +38,31 @@ var scrapeResp = (err, resp, html) => {
     return obj.type === 'tag' && obj.name === 'a' && !obj.attribs.id;
   });
 
-  generateLyrics(collection);
+  console.log("Start scraping.........\n");
+  generateLyricsSync(collection, 0);
 };
 
+// extracts each song's lyrics in blocking fashion with random breaks
+var generateLyricsSync = (collection, i) => {
+  var relurl = collection[i].attribs.href;
+  var songName = collection[i].children[0].data;
+  var song = new Song(songName, relurl);
+  song.getLyrics((success) => {
+    if (success) {
+      suc_count++;
+      writer.write(song);
+    }
+    if (i == collection.length) {
+      writer.end();
+      console.log("Scraped " + suc_count + " out of " + collection.length + ".");
+    }else{
+      //call next iteration after a slight delay
+      setTimeout(()=>{
+        generateLyricsSync(collection,i+1);
+      },Math.round(3000 * Math.random()));
+    }
+  })
+}
 
 // extracts each song's lyrics
 var generateLyrics = (collection) => {
@@ -59,7 +82,7 @@ var generateLyrics = (collection) => {
       if (count == collection.length) {
         //clear resources 
         writer.end();
-        console.log("Scraped "+suc_count+" out of "+collection.length+".")
+        console.log("Scraped " + suc_count + " out of " + collection.length + ".")
       }
     });
   });
