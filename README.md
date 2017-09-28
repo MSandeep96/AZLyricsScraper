@@ -7,4 +7,4 @@ Configuration:
     npm install
     npm start
     
-Git gud or git banned.
+Git gud or git banned. (Check NoBan branch)
