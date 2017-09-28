@@ -3,16 +3,16 @@ var request = require('request');
 
 /**
  * Persistent properties
- * name
- * link
- * lyrics
+ * @param name {String} song's name.
+ * @param link {String} song's relative link
+ * @property lyrics {String} song's lyrics
  */
 class Song {
 
 
 	constructor(name, link) {
 		this.name = name;
-		this.link = link;
+		this.link = this.formatLink(link);
 		this.getLyrics.bind(this);
 	}
 
@@ -32,9 +32,15 @@ class Song {
 				callback(false);
 				return;
 			}
-
+			const $ = cheerio.load(html);
+			
+			if(!$('.ringtone')[0]){
+				console.log("Failed to parse " + this.name + " from " + this.link + "\n");
+				callback(false);
+				return;
+			}
 			var lyricsDiv = $('.ringtone')[0].next;
-			while (!check(lyricsDiv)) {
+			while (!this.check(lyricsDiv)) {
 				lyricsDiv = lyricsDiv.next;
 			}
 

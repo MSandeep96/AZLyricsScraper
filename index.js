@@ -7,11 +7,15 @@ const fs = require('fs');
 const artist = require('./artist.json');
 var Song = require('./song.js');
 
+//create data folder if it doesn't exist
+var dir = './data';
+if(!fs.existsSync(dir)){
+  fs.mkdirSync(dir);
+}
 
 // create csvWriters
 var writer = csvWriter({ headers: ['name', 'link', 'lyrics'] });
-writer.pipe(fs.createWriteStream(artist.name + '_data.csv'));
-
+writer.pipe(fs.createWriteStream('data/' + artist.name + '_data.csv'));
 
 // since url is of the form '/e/eminem.html'
 var url = 'https://www.azlyrics.com/';

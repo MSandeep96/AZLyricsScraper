@@ -13,5 +13,8 @@
     "cheerio": "^1.0.0-rc.2",
     "csv-write-stream": "^2.0.0",
     "request": "^2.83.0"
+  },
+  "devDependencies": {
+    "mocha": "^3.5.3"
   }
 }
