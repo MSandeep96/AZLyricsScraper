@@ -59,7 +59,7 @@ var generateLyricsSync = (collection, i) => {
       //call next iteration after a slight delay
       setTimeout(()=>{
         generateLyricsSync(collection,i+1);
-      },Math.round(3000 * Math.random()));
+      },Math.round(10000 + 10000 * (Math.random() * 2)));
     }
   })
 }
